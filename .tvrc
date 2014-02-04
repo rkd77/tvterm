@@ -1,0 +1,10 @@
+[TV]
+{
+ [Linux]
+ {
+  AppCP=885920
+  ScrCP=885920
+  InpCP=885920
+  UseVCS=1
+ }
+}

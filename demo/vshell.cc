@@ -61,7 +61,6 @@ enum
 	cmAbout	= 101,	//about box
 	cmCreate,	//creates a new life window
 	cmWyswietl,
-	cmSwitch,
 };
 
 struct colors col[64];
@@ -734,8 +733,11 @@ void TMyApp::handleEvent(TEvent &event)
 		case cmCreate:
 			createTerminalWindow();
 			break;
-		case cmSwitch:
-			//fprintf(stderr, "ALT TAB ");
+		case cmNext:
+			selectNext(true);
+			break;
+		case cmPrev:
+			selectNext(false);
 			break;
 		default:
 			return;
@@ -804,7 +806,8 @@ TStatusLine* TMyApp::initStatusLine(TRect r)
 	*new TStatusItem("~Alt-N~ New terminal", kbAlN, cmCreate) +
 	*new TStatusItem("~Alt-F3~ Close", kbAlF3, cmClose) +
 	*new TStatusItem(0, kbCtF10, cmMenu) +
-	*new TStatusItem(0, kbAlTab, cmSwitch) +
+	*new TStatusItem(0, kbAlTab, cmNext) +
+	*new TStatusItem(0, kbCtAlTab, cmPrev) +
 	*new TStatusItem("~F12~ Zoom", kbF12, cmZoom) +
 	*new TStatusItem(0, kbCtF5, cmResize));
 }

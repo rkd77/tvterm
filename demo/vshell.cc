@@ -39,6 +39,7 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 #define Uses_TDialog
 #define Uses_TFrame
 #define Uses_TKeys
+#define Uses_TKeys_Extended
 #define Uses_TMenuBar
 #define Uses_TMenuBox
 #define Uses_TMenuItem
@@ -60,6 +61,7 @@ enum
 	cmAbout	= 101,	//about box
 	cmCreate,	//creates a new life window
 	cmWyswietl,
+	cmSwitch,
 };
 
 struct colors col[64];
@@ -352,7 +354,7 @@ static void decodeKey(short k, chtype ch[2])
 		//fprintf(stderr, "RIGHT\n");
 		ch[0] = KEY_RIGHT;
 		break;
-	case kbBack:
+	case kbBackSpace:
 		//fprintf(stderr, "BACKSPACE\n");
 		ch[0] = KEY_BACKSPACE;
 		break;
@@ -371,10 +373,10 @@ static void decodeKey(short k, chtype ch[2])
 	case kbEnd:
 		ch[0] = KEY_END;
 		break;
-	case kbIns:
+	case kbInsert:
 		ch[0] = KEY_IC;
 		break;
-	case kbDel:
+	case kbDelete:
 		ch[0] = KEY_DC;
 		break;
 	case kbF1:
@@ -413,147 +415,147 @@ static void decodeKey(short k, chtype ch[2])
 	case kbF12:
 		ch[0] = KEY_F(12);
 		break;
-	case kbAltA:
+	case kbAlA:
 		ch[0] = 27;
 		ch[1] = 'A';
 		break;
-	case kbAltB:
+	case kbAlB:
 		ch[0] = 27;
 		ch[1] = 'B';
 		break;
-	case kbAltC:
+	case kbAlC:
 		ch[0] = 27;
 		ch[1] = 'C';
 		break;
-	case kbAltD:
+	case kbAlD:
 		ch[0] = 27;
 		ch[1] = 'D';
 		break;
-	case kbAltE:
+	case kbAlE:
 		ch[0] = 27;
 		ch[1] = 'E';
 		break;
-	case kbAltF:
+	case kbAlF:
 		ch[0] = 27;
 		ch[1] = 'F';
 		break;
-	case kbAltG:
+	case kbAlG:
 		ch[0] = 27;
 		ch[1] = 'G';
 		break;
-	case kbAltH:
+	case kbAlH:
 		ch[0] = 27;
 		ch[1] = 'H';
 		break;
-	case kbAltI:
+	case kbAlI:
 		ch[0] = 27;
 		ch[1] = 'I';
 		break;
-	case kbAltJ:
+	case kbAlJ:
 		ch[0] = 27;
 		ch[1] = 'J';
 		break;
-	case kbAltK:
+	case kbAlK:
 		ch[0] = 27;
 		ch[1] = 'K';
 		break;
-	case kbAltL:
+	case kbAlL:
 		ch[0] = 27;
 		ch[1] = 'L';
 		break;
-	case kbAltM:
+	case kbAlM:
 		ch[0] = 27;
 		ch[1] = 'M';
 		break;
-	case kbAltN:
+	case kbAlN:
 		ch[0] = 27;
 		ch[1] = 'N';
 		break;
-	case kbAltO:
+	case kbAlO:
 		ch[0] = 27;
 		ch[1] = 'O';
 		break;
-	case kbAltP:
+	case kbAlP:
 		ch[0] = 27;
 		ch[1] = 'P';
 		break;
-	case kbAltQ:
+	case kbAlQ:
 		ch[0] = 27;
 		ch[1] = 'Q';
 		break;
-	case kbAltR:
+	case kbAlR:
 		ch[0] = 27;
 		ch[1] = 'R';
 		break;
-	case kbAltS:
+	case kbAlS:
 		ch[0] = 27;
 		ch[1] = 'S';
 		break;
-	case kbAltT:
+	case kbAlT:
 		ch[0] = 27;
 		ch[1] = 'T';
 		break;
-	case kbAltU:
+	case kbAlU:
 		ch[0] = 27;
 		ch[1] = 'U';
 		break;
-	case kbAltV:
+	case kbAlV:
 		ch[0] = 27;
 		ch[1] = 'V';
 		break;
-	case kbAltW:
+	case kbAlW:
 		ch[0] = 27;
 		ch[1] = 'W';
 		break;
-	case kbAltX:
+	case kbAlX:
 		ch[0] = 27;
 		ch[1] = 'X';
 		break;
-	case kbAltY:
+	case kbAlY:
 		ch[0] = 27;
 		ch[1] = 'Y';
 		break;
-	case kbAltZ:
+	case kbAlZ:
 		ch[0] = 27;
 		ch[1] = 'Z';
 		break;
-	case kbAlt0:
+	case kbAl0:
 		ch[0] = 27;
 		ch[1] = '0';
 		break;
-	case kbAlt1:
+	case kbAl1:
 		ch[0] = 27;
 		ch[1] = '1';
 		break;
-	case kbAlt2:
+	case kbAl2:
 		ch[0] = 27;
 		ch[1] = '2';
 		break;
-	case kbAlt3:
+	case kbAl3:
 		ch[0] = 27;
 		ch[1] = '3';
 		break;
-	case kbAlt4:
+	case kbAl4:
 		ch[0] = 27;
 		ch[1] = '4';
 		break;
-	case kbAlt5:
+	case kbAl5:
 		ch[0] = 27;
 		ch[1] = '5';
 		break;
-	case kbAlt6:
+	case kbAl6:
 		ch[0] = 27;
 		ch[1] = '6';
 		break;
-	case kbAlt7:
+	case kbAl7:
 		ch[0] = 27;
 		ch[1] = '7';
 		break;
-	case kbAlt8:
+	case kbAl8:
 		ch[0] = 27;
 		ch[1] = '8';
 		break;
-	case kbAlt9:
+	case kbAl9:
 		ch[0] = 27;
 		ch[1] = '9';
 		break;
@@ -732,6 +734,9 @@ void TMyApp::handleEvent(TEvent &event)
 		case cmCreate:
 			createTerminalWindow();
 			break;
+		case cmSwitch:
+			//fprintf(stderr, "ALT TAB ");
+			break;
 		default:
 			return;
 		}
@@ -795,20 +800,21 @@ TStatusLine* TMyApp::initStatusLine(TRect r)
 	r.a.y = r.b.y - 1;
 	return new TStatusLine(r,
 	*new TStatusDef(0, 50) +
-	*new TStatusItem("~Alt-X~ Exit", kbAltX, cmQuit) +
-	*new TStatusItem("~Alt-N~ Terminal", kbAltN, cmCreate) +
-	*new TStatusItem("~Alt-F3~ Close", kbAltF3, cmClose) +
-	*new TStatusItem(0, kbCtrlF10, cmMenu) +
+	*new TStatusItem("~Alt-X~ Exit", kbAlX, cmQuit) +
+	*new TStatusItem("~Alt-N~ New terminal", kbAlN, cmCreate) +
+	*new TStatusItem("~Alt-F3~ Close", kbAlF3, cmClose) +
+	*new TStatusItem(0, kbCtF10, cmMenu) +
+	*new TStatusItem(0, kbAlTab, cmSwitch) +
 	*new TStatusItem("~F12~ Zoom", kbF12, cmZoom) +
-	*new TStatusItem(0, kbCtrlF5, cmResize));
+	*new TStatusItem(0, kbCtF5, cmResize));
 }
 
 TMenuBar* TMyApp::initMenuBar(TRect r)
 {
 	TSubMenu& sub1 = *new TSubMenu("~F~ile", 0) +
-	*new TMenuItem("~T~erminal", cmCreate, kbAltN, hcNoContext, "Alt-N") +
+	*new TMenuItem("New ~t~erminal", cmCreate, kbAlN, hcNoContext, "Alt-N") +
 	newLine() +
-	*new TMenuItem("E~x~it", cmQuit, kbAltX, hcNoContext, "Alt-X");
+	*new TMenuItem("E~x~it", cmQuit, kbAlX, hcNoContext, "Alt-X");
 
 	r.b.y =  r.a.y + 1;
 	return new TMenuBar(r, sub1);

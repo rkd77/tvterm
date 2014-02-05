@@ -1,5 +1,5 @@
 /*
-CopyRight (C) 2014 Witold Filipczyk
+Copyright (C) 2014 Witold Filipczyk
 Copyright (C) 2009 Bryan Christ
 
 This program is free software; you can redistribute it and/or
@@ -28,9 +28,9 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 #include <signal.h>
 #include <locale.h>
 
-#include <vterm.h>
-#include <vterm_private.h>
-#include <vterm_colors.h>
+#include "vterm.h"
+#include "vterm_private.h"
+#include "vterm_colors.h"
 
 #define Uses_TApplication
 #define Uses_TButton
@@ -295,10 +295,6 @@ void TMyApp::cpCallBack(unsigned short *map)
 	ourRemapString((unsigned char *)TMenuBox::frameChars, (unsigned char *)TMenuBox::oframeChars, map);
 	ourRemapString((unsigned char *)TFrame::dragIcon, (unsigned char *)TFrame::odragIcon, map);
 
-	//TVCodePage::RemapString(systemMenuIcon,osystemMenuIcon,map);
-	//TCalendarView::upArrowChar=TVCodePage::RemapChar(TCalendarView::oupArrowChar,map);
-	//TCalendarView::downArrowChar=TVCodePage::RemapChar(TCalendarView::odownArrowChar,map);
-	// If the chain was already used call it
 	if (oldCPCallBack) oldCPCallBack(map);
 }
 
@@ -307,13 +303,18 @@ TWindowTerm::TWindowTerm(TRect& bounds, TTerminalWindow *parent) : TView(bounds)
 	eventMask |= evMouseUp;
 	options = ofSelectable;
 	vterm = vterm_create(size.x, size.y, 0);
-	vterm_set_colors(vterm, COLOR_WHITE, COLOR_BLACK);
-	//pWindow = parent;
+	if (vterm)
+	{
+		vterm_set_colors(vterm, COLOR_WHITE, COLOR_BLACK);
+	}
 }
 
 void TWindowTerm::zmienRozmiar(TPoint s)
 {
-	vterm_resize(vterm, s.x-2, s.y-2);
+	if (vterm)
+	{
+		vterm_resize(vterm, s.x-2, s.y-2);
+	}
 	growTo(s.x-2,s.y-2);
 	drawView();
 }
@@ -597,6 +598,8 @@ void TWindowTerm::draw()
 
 void TWindowTerm::sendMouseEvent(TEvent &event)
 {
+	if (vterm == NULL) return;
+
 	unsigned char buffer[6];
 	unsigned char b = 3;
 	TPoint l = makeLocal(event.mouse.where);
@@ -619,6 +622,8 @@ void TWindowTerm::sendMouseEvent(TEvent &event)
 
 void TWindowTerm::handleEvent(TEvent& event)
 {
+	if (vterm == NULL) return;
+
 	chtype ch[2] = {0};
 
 	TView::handleEvent(event);
@@ -660,7 +665,7 @@ TWindowTerm::~TWindowTerm()
 {
 	//fprintf(stderr, "~TwindowTerm\n");
 	terminale.remove(this);
-	vterm_destroy(vterm);
+	if (vterm) vterm_destroy(vterm);
 }
 
 
@@ -740,7 +745,7 @@ void TMyApp::handleEvent(TEvent &event)
 
 void TMyApp::createTerminalWindow()
 {
-	TRect r(0, 0, 75, 20);;
+	TRect r(0, 0, 75, 20);
 	r.grow(-1, -1);
 
 	TTerminalWindow *w = new TTerminalWindow(r, (char *)"term", 0);

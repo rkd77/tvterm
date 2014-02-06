@@ -2,7 +2,7 @@ CFLAGS = -Wall -g3 -O2
 DEFS = -D_REENTRANT
 GLIB_INCLUDES = `pkg-config --cflags glib-2.0`
 GLIB_LIBS = `pkg-config --libs glib-2.0`
-prefix = /usr/local
+PREFIX = /usr/local
 libdir = /usr/lib
 includedir = /usr/include
 RHTV_LIBS = `rhtv-config --dlibs`
@@ -29,4 +29,4 @@ clean:
 	rm -f *.o demo/*.o
 
 install:
-	install demo/tvterm $(DESTDIR)/$(PREFIX)/bin
+	install tvterm $(DESTDIR)/$(PREFIX)/bin

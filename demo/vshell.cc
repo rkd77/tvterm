@@ -54,7 +54,6 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 #include <tv.h>
 
 int screen_w, screen_h;
-//WINDOW_TV *term_win;
 
 enum
 {
@@ -144,6 +143,8 @@ public:
 	static TVCodePageCallBack oldCPCallBack;
 	static void cpCallBack(unsigned short *map); // That's our callback
 };
+
+TMyApp *app;
 
 TVCodePageCallBack TMyApp::oldCPCallBack = NULL;
 
@@ -688,7 +689,7 @@ TTerminalWindow::TTerminalWindow(TRect& bounds, char* str, int num):
 
 TTerminalWindow::~TTerminalWindow()
 {
-	//fprintf(stderr, "~TTerminalWindow\n");
+	app->statusLine->draw();
 }
 
 void TTerminalWindow::setTitle(char *text)
@@ -724,7 +725,6 @@ TMyApp::TMyApp(): TProgInit(&TMyApp::initStatusLine, &TMyApp::initMenuBar,
 
 void TMyApp::handleEvent(TEvent &event)
 {
-	//fprintf(stderr, "TMyApp::handleEvent: event.what = %d\n", event.what);
 	TApplication::handleEvent(event);
 	if (event.what == evCommand)
 	{
@@ -732,6 +732,7 @@ void TMyApp::handleEvent(TEvent &event)
 		{
 		case cmCreate:
 			createTerminalWindow();
+			statusLine->draw();
 			break;
 		case cmNext:
 			selectNext(true);
@@ -744,10 +745,6 @@ void TMyApp::handleEvent(TEvent &event)
 		}
 		clearEvent(event);
 	}
-	else if (event.what != 0)
-	{
-		//fprintf(stderr, "TMyApp::handleEvent: event.what = %d\n", event.what);
-	}
 }
 
 void TMyApp::createTerminalWindow()
@@ -755,7 +752,7 @@ void TMyApp::createTerminalWindow()
 	TRect r(0, 0, 75, 20);
 	r.grow(-1, -1);
 
-	TTerminalWindow *w = new TTerminalWindow(r, (char *)"term", 0);
+	TTerminalWindow *w = new TTerminalWindow(r, (char *)"tvterm", 0);
 	if (w)
 	{
 		deskTop->insert(w);
@@ -801,14 +798,14 @@ TStatusLine* TMyApp::initStatusLine(TRect r)
 {
 	r.a.y = r.b.y - 1;
 	return new TStatusLine(r,
-	*new TStatusDef(0, 50) +
+	*new TStatusDef(0, 90) +
 	*new TStatusItem("~Alt-X~ Exit", kbAlX, cmQuit) +
 	*new TStatusItem("~Alt-N~ New terminal", kbAlN, cmCreate) +
 	*new TStatusItem("~Alt-F3~ Close", kbAlF3, cmClose) +
+	*new TStatusItem("~F12~ Zoom", kbF12, cmZoom) +
 	*new TStatusItem(0, kbCtF10, cmMenu) +
 	*new TStatusItem(0, kbAlTab, cmNext) +
 	*new TStatusItem(0, kbCtAlTab, cmPrev) +
-	*new TStatusItem("~F12~ Zoom", kbF12, cmZoom) +
 	*new TStatusItem(0, kbCtF5, cmResize));
 }
 
@@ -826,17 +823,19 @@ TMenuBar* TMyApp::initMenuBar(TRect r)
 int main()
 {
 	init_colors();
-	//setlocale(LC_ALL,"C");
 	char *term = getenv("TERM");
 
 	if (term && !strcmp(term, "linux"))
 	{
 		linux_console = true;
 	} 
-
 	if (linux_console) TMyApp::oldCPCallBack = TVCodePage::SetCallBack(TMyApp::cpCallBack);
 
-	TMyApp app;
-	app.run();
+	app = new TMyApp();
+	if (app)
+	{
+		app->run();
+		delete app;
+	}
 	return 0;
 }

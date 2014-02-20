@@ -57,6 +57,7 @@ int screen_w, screen_h;
 
 unsigned char remap_char[256];
 unsigned char remap_frame[256];
+unsigned char remap_letter[256];
 
 enum
 {
@@ -188,6 +189,15 @@ unsigned char remap_pairs_frames[][2] =
 	{0, 0},
 };
 
+unsigned char remap_pairs_letters[][2] =
+{
+	{198, 6},
+	{202, 10},
+	{209, 17},
+	{211, 19},
+	{0, 0},
+};
+
 static void init_remap_chars(void)
 {
 	unsigned char remap_frame_tmp[256];
@@ -196,6 +206,7 @@ static void init_remap_chars(void)
 	{
 		remap_char[i] = (unsigned char)i;
 		remap_frame_tmp[i] = (unsigned char)i;
+		remap_letter[i] = (unsigned char)i;
 	}
 	for (int i = 0; remap_pairs[i][0] != remap_pairs[i][1]; ++i)
 	{
@@ -205,6 +216,11 @@ static void init_remap_chars(void)
 	{
 		remap_frame_tmp[remap_pairs_frames[i][0]] = remap_pairs_frames[i][1];
 	}
+	for (int i = 0; remap_pairs_letters[i][0] != remap_pairs_letters[i][1]; ++i)
+	{
+		remap_letter[remap_pairs_letters[i][0]] = remap_pairs_letters[i][1];
+	}
+
 	for (int i = 0; i <= 255; ++i)
 	{
 		remap_frame[i] = remap_char[remap_frame_tmp[i]];
@@ -223,21 +239,7 @@ chtype tv_frames(chtype c)
 
 chtype tv_capital(chtype c)
 {
-	unsigned char ch = (unsigned char)c;
-
-	switch (ch)
-	{
-		case 198:
-			return 6;
-		case 202:
-			return 10;
-		case 209:
-			return 17;
-		case 211:
-			return 19;
-		default:
-			return c;
-	}
+	return (c < 256) ? remap_letter[c] : c;
 }
 
 static void ourRemapString(unsigned char *out, unsigned char *in, unsigned short *map)

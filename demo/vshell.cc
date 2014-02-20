@@ -190,22 +190,24 @@ unsigned char remap_pairs_frames[][2] =
 
 static void init_remap_chars(void)
 {
+	unsigned char remap_frame_tmp[256];
+
 	for (int i = 0; i <= 255; ++i)
 	{
 		remap_char[i] = (unsigned char)i;
-		remap_frame[i] = (unsigned char)i;
+		remap_frame_tmp[i] = (unsigned char)i;
 	}
 	for (int i = 0; remap_pairs[i][0] != remap_pairs[i][1]; ++i)
 	{
 		remap_char[remap_pairs[i][0]] = remap_pairs[i][1];
 	}
-//	for (int i = 0; i <= 255; ++i)
-//	{
-//		remap_frame[i] = remap_char[i];
-//	}
 	for (int i = 0; remap_pairs_frames[i][0] != remap_pairs_frames[i][1]; ++i)
 	{
-		remap_frame[remap_pairs_frames[i][0]] = remap_pairs_frames[i][1];
+		remap_frame_tmp[remap_pairs_frames[i][0]] = remap_pairs_frames[i][1];
+	}
+	for (int i = 0; i <= 255; ++i)
+	{
+		remap_frame[i] = remap_char[remap_frame_tmp[i]];
 	}
 }
 
@@ -216,10 +218,7 @@ static unsigned char ourRemapChar(unsigned char ch, unsigned short *map)
 
 chtype tv_frames(chtype c)
 {
-	//return remap_frame[c];
-
-	unsigned char rc = remap_frame[c];
-	return remap_char[rc];
+	return remap_frame[c];
 }
 
 chtype tv_capital(chtype c)

@@ -55,6 +55,9 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 
 int screen_w, screen_h;
 
+unsigned char remap_char[256];
+unsigned char remap_frame[256];
+
 enum
 {
 	cmAbout	= 101,	//about box
@@ -148,117 +151,75 @@ TMyApp *app;
 
 TVCodePageCallBack TMyApp::oldCPCallBack = NULL;
 
+unsigned char remap_pairs[][2] =
+{
+	{18, 193},
+	{24, 196},
+	{186, 223},
+	{179, 223},
+	{205, 204},
+	{196, 204},
+	{200, 208},
+	{192, 208},
+	{201, 221},
+	{218, 221},
+	{187, 222},
+	{191, 222},
+	{217, 209},
+	{188, 209},
+	{195, 219},
+	{180, 218},
+	{0, 0},
+};
+
+unsigned char remap_pairs_frames[][2] =
+{
+	{'a', 177},
+	{'j', 217}, ///209},//217},
+	{'l', 218}, ///221},//218},
+	{'m', 192},
+	{'n', 197},
+	{'q', 196},
+	{'t', 195},
+	{'u', 180}, ///218},//180},
+	{'v', 193},
+	{'w', 194},
+	{'x', 179},///223},//179},
+	{0, 0},
+};
+
+static void init_remap_chars(void)
+{
+	for (int i = 0; i <= 255; ++i)
+	{
+		remap_char[i] = (unsigned char)i;
+		remap_frame[i] = (unsigned char)i;
+	}
+	for (int i = 0; remap_pairs[i][0] != remap_pairs[i][1]; ++i)
+	{
+		remap_char[remap_pairs[i][0]] = remap_pairs[i][1];
+	}
+//	for (int i = 0; i <= 255; ++i)
+//	{
+//		remap_frame[i] = remap_char[i];
+//	}
+	for (int i = 0; remap_pairs_frames[i][0] != remap_pairs_frames[i][1]; ++i)
+	{
+		remap_frame[remap_pairs_frames[i][0]] = remap_pairs_frames[i][1];
+	}
+}
+
 static unsigned char ourRemapChar(unsigned char ch, unsigned short *map)
 {
-	switch (ch)
-	{
-		case 18:
-			return 193;
-		case 24:
-			return 196;
-		case 186:
-		case 179:
-			return 223;
-		case 205:
-		case 196:
-			return 204;
-		case 200:
-		case 192:
-			return 208;
-		case 201:
-		case 218:
-			return 221;
-		case 187:
-		case 191:
-			return 222;
-		case 217:
-		case 188:
-			return 209;
-		case 195:
-			return 219;
-		case 180:
-			return 218;
-		case 177:
-		case 193:
-		case 194:
-		case 197:
-		default:
-			break;
-	}
-	return ch;
+	return remap_char[ch];
 }
 
 chtype tv_frames(chtype c)
 {
-//	static char		vt100_acs[]="`afgjklmnopqrstuvwxyz{|}~";
-	switch (c)
-	{
-		case '`':
-			break;
-		case 'a':
-			c = 177;
-			break;
-		case 'f':
-			break;
-		case 'g':
-			break;
-		case 'j':
-			c = 217;
-			break;
-		case 'k':
-			c = 191;
-			break;
-		case 'l':
-			c = 218;
-			break;
-		case 'm':
-			c = 192;
-			break;
-		case 'n':
-			c = 197;
-			break;
-		case 'o':
-			break;
-		case 'p':
-			break;
-		case 'q':
-			c = 196;
-			break;
-		case 'r':
-			break;
-		case 's':
-			break;
-		case 't':
-			c = 195;
-			break;
-		case 'u':
-			c = 180;
-			break;
-		case 'v':
-			c = 193;
-			break;
-		case 'w':
-			c = 194;
-			break;
-		case 'x':
-			c = 179;
-			break;
-		case 'y':
-			break;
-		case 'z':
-			break;
-		case '{':
-			break;
-		case '|':
-			break;
-		case '}':
-			break;
-		case '~':
-			break;
-		default:
-			break;
-	}
-	return ourRemapChar(c, NULL);
+	//return remap_frame[c];
+
+	unsigned char rc = remap_frame[c];
+	return remap_char[rc];
 }
 
 chtype tv_capital(chtype c)
@@ -823,6 +784,7 @@ TMenuBar* TMyApp::initMenuBar(TRect r)
 int main()
 {
 	init_colors();
+	init_remap_chars();
 	char *term = getenv("TERM");
 
 	if (term && !strcmp(term, "linux"))

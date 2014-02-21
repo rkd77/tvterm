@@ -22,6 +22,8 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 */
 
 #include <errno.h>
+#include <langinfo.h>
+#include <locale.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,7 +81,7 @@ short color_values[] = {
 	7//7
 };
 
-static bool linux_console;
+static bool linux_console_8859_2;
 
 chtype acs_map[128];
 
@@ -241,7 +243,7 @@ static void init_remap_chars(void)
 		remap_frame[i] = (unsigned char)i;
 	}
 
-	if (linux_console)
+	if (linux_console_8859_2)
 	{
 		remap_pairs = remap_pairs_8859_2;
 		remap_pairs_frames = remap_pairs_frames_8859_2;
@@ -831,14 +833,21 @@ TMenuBar* TMyApp::initMenuBar(TRect r)
 int main()
 {
 	char *term = getenv("TERM");
+	setlocale(LC_ALL,"");
+
 	if (term && !strcmp(term, "linux"))
 	{
-		linux_console = true;
+		char *codeset = nl_langinfo(CODESET);
+
+		if (codeset && !strcmp(codeset, "ISO-8859-2"))
+		{
+			linux_console_8859_2 = true;
+		}
 	} 
 	init_colors();
 	init_remap_chars();
 
-	if (linux_console) TMyApp::oldCPCallBack = TVCodePage::SetCallBack(TMyApp::cpCallBack);
+	if (linux_console_8859_2) TMyApp::oldCPCallBack = TVCodePage::SetCallBack(TMyApp::cpCallBack);
 
 	app = new TMyApp();
 	if (app)

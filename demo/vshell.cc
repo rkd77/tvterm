@@ -154,7 +154,30 @@ TVCodePageCallBack TMyApp::oldCPCallBack = NULL;
 
 typedef unsigned char para[2];
 
-unsigned char remap_pairs_8859_2[][2] =
+static unsigned char remap_pairs_8859_1[][2] =
+{
+	{0, 0},
+};
+
+static unsigned char remap_pairs_frames_8859_1[][2] =
+{
+	{'x', 133},
+	{'q', 138},
+	{'t', 135},
+	{'u', 141},
+	{'m', 131},
+	{'j', 137},
+	{'l', 134},
+	{'k', 140},
+	{0, 0},
+};
+
+static unsigned char remap_pairs_letters_8859_1[][2] =
+{
+	{0, 0},
+};
+
+static unsigned char remap_pairs_8859_2[][2] =
 {
 	{18, 193},
 	{24, 196},
@@ -175,7 +198,7 @@ unsigned char remap_pairs_8859_2[][2] =
 	{0, 0},
 };
 
-unsigned char remap_pairs_frames_8859_2[][2] =
+static unsigned char remap_pairs_frames_8859_2[][2] =
 {
 	{'a', 177},
 	{'j', 217}, ///209},//217},
@@ -191,7 +214,7 @@ unsigned char remap_pairs_frames_8859_2[][2] =
 	{0, 0},
 };
 
-unsigned char remap_pairs_letters_8859_2[][2] =
+static unsigned char remap_pairs_letters_8859_2[][2] =
 {
 	{198, 6},
 	{202, 10},
@@ -221,8 +244,12 @@ static void init_remap_chars(void)
 		remap_pairs_frames = remap_pairs_frames_8859_2;
 		remap_pairs_letters = remap_pairs_letters_8859_2;
 	}
-
-	if (!linux_console) return;
+	else
+	{
+		remap_pairs = remap_pairs_8859_1;
+		remap_pairs_frames = remap_pairs_frames_8859_1;
+		remap_pairs_letters = remap_pairs_letters_8859_1;
+	}
 
 	for (int i = 0; remap_pairs[i][0] != remap_pairs[i][1]; ++i)
 	{

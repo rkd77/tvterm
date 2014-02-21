@@ -152,7 +152,9 @@ TMyApp *app;
 
 TVCodePageCallBack TMyApp::oldCPCallBack = NULL;
 
-unsigned char remap_pairs[][2] =
+typedef unsigned char para[2];
+
+unsigned char remap_pairs_8859_2[][2] =
 {
 	{18, 193},
 	{24, 196},
@@ -173,7 +175,7 @@ unsigned char remap_pairs[][2] =
 	{0, 0},
 };
 
-unsigned char remap_pairs_frames[][2] =
+unsigned char remap_pairs_frames_8859_2[][2] =
 {
 	{'a', 177},
 	{'j', 217}, ///209},//217},
@@ -189,7 +191,7 @@ unsigned char remap_pairs_frames[][2] =
 	{0, 0},
 };
 
-unsigned char remap_pairs_letters[][2] =
+unsigned char remap_pairs_letters_8859_2[][2] =
 {
 	{198, 6},
 	{202, 10},
@@ -201,13 +203,27 @@ unsigned char remap_pairs_letters[][2] =
 static void init_remap_chars(void)
 {
 	unsigned char remap_frame_tmp[256];
+	para *remap_pairs;
+	para *remap_pairs_frames;
+	para *remap_pairs_letters;
 
 	for (int i = 0; i <= 255; ++i)
 	{
 		remap_char[i] = (unsigned char)i;
 		remap_frame_tmp[i] = (unsigned char)i;
 		remap_letter[i] = (unsigned char)i;
+		remap_frame[i] = (unsigned char)i;
 	}
+
+	if (linux_console)
+	{
+		remap_pairs = remap_pairs_8859_2;
+		remap_pairs_frames = remap_pairs_frames_8859_2;
+		remap_pairs_letters = remap_pairs_letters_8859_2;
+	}
+
+	if (!linux_console) return;
+
 	for (int i = 0; remap_pairs[i][0] != remap_pairs[i][1]; ++i)
 	{
 		remap_char[remap_pairs[i][0]] = remap_pairs[i][1];
@@ -784,14 +800,14 @@ TMenuBar* TMyApp::initMenuBar(TRect r)
 
 int main()
 {
-	init_colors();
-	init_remap_chars();
 	char *term = getenv("TERM");
-
 	if (term && !strcmp(term, "linux"))
 	{
 		linux_console = true;
 	} 
+	init_colors();
+	init_remap_chars();
+
 	if (linux_console) TMyApp::oldCPCallBack = TVCodePage::SetCallBack(TMyApp::cpCallBack);
 
 	app = new TMyApp();

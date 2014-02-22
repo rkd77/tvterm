@@ -1,12 +1,12 @@
 CFLAGS = -Wall -g3 -O2
 DEFS = -D_REENTRANT
-GLIB_INCLUDES = `pkg-config --cflags glib-2.0`
-GLIB_LIBS = `pkg-config --libs glib-2.0`
+GLIB_INCLUDES = $(shell pkg-config --cflags glib-2.0)
+GLIB_LIBS = $(shell pkg-config --libs glib-2.0)
 PREFIX = /usr/local
 libdir = /usr/lib
 includedir = /usr/include
-RHTV_LIBS = `rhtv-config --dlibs`
-RHTV_INCLUDES = `rhtv-config --include`
+RHTV_LIBS = $(shell rhtv-config --dlibs)
+RHTV_INCLUDES = $(shell rhtv-config --include)
 OBJS = vterm.o vterm_colors.o vterm_csi.o vterm_csi_CUP.o \
 vterm_csi_CUx.o vterm_csi_DCH.o vterm_csi_DECSTBM.o vterm_csi_DL.o \
 vterm_csi_ECH.o vterm_csi_ED.o vterm_csi_EL.o vterm_csi_ICH.o \

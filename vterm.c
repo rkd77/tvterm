@@ -42,12 +42,12 @@ vterm_t* vterm_create(guint width,guint height,guint flags)
 {
    vterm_t        *vterm;
    struct passwd  *user_profile;
-   char           *user_shell=NULL;
+   const char     *user_shell=NULL;
    pid_t          child_pid;
    int            master_fd;
    struct winsize ws={0};//.ws_xpixel=0,.ws_ypixel=0};
-   int            cell_count;
-   int            i;
+   // int            cell_count;
+   guint          i;
 
    if(height <= 0 || width <= 0) return NULL;
 
@@ -57,7 +57,7 @@ vterm_t* vterm_create(guint width,guint height,guint flags)
    vterm->rows=height;
    vterm->cols=width;
 
-   cell_count=width*height;
+   // cell_count=width*height;
 
    /* create the cell matrix */
    vterm->cells=(vterm_cell_t**)g_malloc0(sizeof(vterm_cell_t*)*height);

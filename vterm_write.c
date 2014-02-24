@@ -41,7 +41,7 @@ void vterm_write_pipe(vterm_t *vterm,guint32 keycode)
 
 void vterm_write_rxvt(vterm_t *vterm,guint32 keycode)
 {
-   gchar *buffer=NULL;
+   const gchar *buffer=NULL;
 
    switch(keycode)
    {
@@ -82,7 +82,7 @@ void vterm_write_rxvt(vterm_t *vterm,guint32 keycode)
 
 void vterm_write_vt100(vterm_t *vterm,guint32 keycode)
 {
-   gchar *buffer=NULL;
+   const gchar *buffer=NULL;
 
    switch(keycode)
    {

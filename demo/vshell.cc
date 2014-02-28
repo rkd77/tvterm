@@ -290,12 +290,12 @@ static unsigned char ourRemapChar(unsigned char ch, unsigned short *map)
 
 chtype tv_frames(chtype c)
 {
-	return remap_frame[c];
+	return remap_frame[(unsigned char)c];
 }
 
 chtype tv_capital(chtype c)
 {
-	return (c < 256) ? remap_letter[c] : c;
+	return remap_letter[(unsigned char)c];
 }
 
 static void ourRemapString(unsigned char *out, unsigned char *in, unsigned short *map)

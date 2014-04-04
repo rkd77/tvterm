@@ -582,6 +582,14 @@ static void decodeKey(short k, chtype ch[2])
 	}
 }
 
+static short reverse_color(short color)
+{
+	short a = (color & 15);
+	short b = (color & 240);
+
+	return (a << 4) | (b >> 4);
+}
+
 void TWindowTerm::draw()
 {
 	if (vterm == NULL) return;
@@ -594,7 +602,8 @@ void TWindowTerm::draw()
 		TDrawBuffer d;
 		for (int x = 0; x < mx; ++x)
 		{
-			d.putAttribute(x, vterm->cells[y][x].color);
+			d.putAttribute(x, vterm->cells[y][x].attr & A_REVERSE ?
+			(reverse_color(vterm->cells[y][x].color)) : vterm->cells[y][x].color);
 			d.putChar(x, vterm->cells[y][x].ch);
 		}
 		writeLine(0, y, mx, 1, d);

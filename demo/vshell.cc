@@ -65,7 +65,7 @@ enum
 {
 	cmAbout	= 101,	//about box
 	cmCreate,	//creates a new life window
-	cmWyswietl,
+	cmRedraw,
 };
 
 struct colors col[64];
@@ -767,6 +767,11 @@ void TMyApp::handleEvent(TEvent &event)
 		case cmPrev:
 			selectNext(false);
 			break;
+		case cmRedraw:
+			menuBar->draw();
+			deskTop->draw();
+			statusLine->draw();
+			break;
 		default:
 			return;
 		}
@@ -829,6 +834,7 @@ TStatusLine* TMyApp::initStatusLine(TRect r)
 	*new TStatusItem("~Alt-X~ Exit", kbAlX, cmQuit) +
 	*new TStatusItem("~Alt-N~ New terminal", kbAlN, cmCreate) +
 	*new TStatusItem("~Alt-F3~ Close", kbAlF3, cmClose) +
+	*new TStatusItem("~F11~ Redraw", kbF11, cmRedraw) +
 	*new TStatusItem("~F12~ Zoom", kbF12, cmZoom) +
 	*new TStatusItem(0, kbCtF10, cmMenu) +
 	*new TStatusItem(0, kbAlTab, cmNext) +

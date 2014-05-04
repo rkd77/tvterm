@@ -40,6 +40,7 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 #define Uses_TDeskTop
 #define Uses_TDialog
 #define Uses_TFrame
+#define Uses_TGKey
 #define Uses_TKeys
 #define Uses_TKeys_Extended
 #define Uses_TMenuBar
@@ -53,6 +54,7 @@ This library is based on ROTE written by Bruno Takahashi C. de Oliveira
 #define Uses_TStatusLine
 #define Uses_TSubMenu
 #define Uses_TVCodePage
+#define Uses_TVOSClipboard
 #include <tv.h>
 
 int screen_w, screen_h;
@@ -116,6 +118,7 @@ public:
 	void draw();
 	void handleEvent(TEvent &event);
 	void sendMouseEvent(TEvent &event);
+	void tryPaste(TEvent &event, int clip);
 	void zmienRozmiar(TPoint s);
 	vterm_t *vterm;
 	TTerminalWindow *pWindow;
@@ -625,6 +628,20 @@ void TWindowTerm::draw()
 	}
 }
 
+void TWindowTerm::tryPaste(TEvent &event, int clip)
+{
+	if (vterm == NULL) return;
+
+	if (clip && !(event.mouse.buttons & 2)) return;
+	if (!TVOSClipboard::isAvailable()) return;
+	if (clip >= TVOSClipboard::isAvailable()) return;
+
+	unsigned length;
+	char *buffer = TVOSClipboard::paste(clip, length);
+	if (!buffer) return;
+	::write(vterm->pty_fd, buffer, length);
+}
+
 void TWindowTerm::sendMouseEvent(TEvent &event)
 {
 	if (vterm == NULL) return;
@@ -670,18 +687,23 @@ void TWindowTerm::handleEvent(TEvent& event)
 		clearEvent(event);
 		break;
 	case evMouseDown:
-		if (vterm->state & STATE_MOUSE)
-		{
-			sendMouseEvent(event);
-		}
-		clearEvent(event);
-		break;
 	case evMouseUp:
 		if (vterm->state & STATE_MOUSE)
 		{
 			sendMouseEvent(event);
 		}
+		if (!(vterm->state & STATE_MOUSE) || (TGKey::getShiftState() & (kbLeftShiftDown|kbRightShiftDown)))
+		{
+			tryPaste(event, 1);
+		}
 		clearEvent(event);
+		break;
+	case evCommand:
+		if (event.message.command == cmPaste)
+		{
+			tryPaste(event, 0);
+			clearEvent(event);
+		}
 		break;
 	default:
 		break;
@@ -839,6 +861,7 @@ TStatusLine* TMyApp::initStatusLine(TRect r)
 	*new TStatusItem(0, kbCtF10, cmMenu) +
 	*new TStatusItem(0, kbAlTab, cmNext) +
 	*new TStatusItem(0, kbCtAlTab, cmPrev) +
+	*new TStatusItem(0, kbShInsert, cmPaste) +
 	*new TStatusItem(0, kbCtF5, cmResize));
 }
 
